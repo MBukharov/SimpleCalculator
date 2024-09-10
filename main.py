@@ -7,30 +7,45 @@ def enter_symbol(symb):
     if flag_new_calculation:
         clear_entry()
         flag_new_calculation = False
+
+    #Вставка символа в конец строки
     entry.insert(tk.END,symb)
 
 def calculate():
     global flag_new_calculation
+
+    # Разделяем введенную строку по знакам математических операций
     data = re.split(r'(\+|\-|\*|/)', entry.get())
+
     result = 0
-    operation = "+"
+    operation = "+"    # начальная операция для первого числа просто +
+
+    #пробегаем по всем элементам списка, полученного из введенной строки
     for el in data:
         try:
-            el = int(el)
+            # пробуем преобразовать элемент в число и производим математическую операцию с ним
+            el = float(el)
             result = result + el if (operation == "+") else result
             result = result - el if (operation == "-") else result
             result = result / el if (operation == "/") else result
             result = result * el if (operation == "*") else result
+
+        # если элемент символ математической операции, то запоминаем ее
         except ValueError:
             operation = el
 
+    # Очищаем строку ввода и вставляем результат вычислений
     entry.delete(0, tk.END)
     entry.insert(0,str(result))
+
+    # Чтобы при следующем нажатии на кнопку строка очистилась, устанавливаем флаг в значение True
     flag_new_calculation = True
 
+# Функция для очистки строки ввода
 def clear_entry():
     entry.delete(0,tk.END)
 
+# Функция проверки вводимых данных. Только цифры, знаки мат. операций и точка разрешены
 def validate_entry(s):
     # Паттерн для проверки, что строка содержит только цифры, знаки операций и точку
     pattern = r'^[\d+\-*/.]+$'
@@ -41,7 +56,6 @@ def validate_entry(s):
         return False
 
 root = tk.Tk()
-
 root.title("Калькулятор")
 root.geometry("300x280")
 
@@ -53,8 +67,10 @@ flag_new_calculation = True
 entry = tk.Entry(root, width = 23, font = 20, bg = "azure2", validate="key", validatecommand=(validate_command,"%P"))
 #Параметр validatecommand принимает кортеж: первый элемент это зарегистрированный валидатор,
 # а далее именованные параметры, которые он принимает ('%P' это новый вводимый текст).
+
 entry.place(relx = 0.02, rely = 0.02)
 
+#Кнопки цифр и операций
 b1 = tk.Button(root, width = 6, height = 2, text = '1',font = 20, command = lambda: enter_symbol("1"))
 b1.place(relx = 0.02, rely = 0.18)
 b2 = tk.Button(root, width = 6, height = 2, text = '2',font = 20, command = lambda: enter_symbol("2"))
