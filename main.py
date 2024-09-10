@@ -2,9 +2,15 @@ import tkinter as tk
 import re
 
 def enter_symbol(symb):
+    global flag_new_calculation
+    # если вводить числа после расчета, то строка должна стереться
+    if flag_new_calculation:
+        clear_entry()
+        flag_new_calculation = False
     entry.insert(tk.END,symb)
 
 def calculate():
+    global flag_new_calculation
     data = re.split(r'(\+|\-|\*|/)', entry.get())
     result = 0
     operation = "+"
@@ -20,6 +26,7 @@ def calculate():
 
     entry.delete(0, tk.END)
     entry.insert(0,str(result))
+    flag_new_calculation = True
 
 def clear_entry():
     entry.delete(0,tk.END)
@@ -35,11 +42,13 @@ def validate_entry(s):
 
 root = tk.Tk()
 
-root.title("Калькулятор/khkkjh")
+root.title("Калькулятор")
 root.geometry("300x280")
 
 #Метод root.register оборачивает функцию для использования в качестве команды валидации.
 validate_command = root.register(validate_entry)
+
+flag_new_calculation = True
 
 entry = tk.Entry(root, width = 23, font = 20, bg = "azure2", validate="key", validatecommand=(validate_command,"%P"))
 #Параметр validatecommand принимает кортеж: первый элемент это зарегистрированный валидатор,
