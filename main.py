@@ -11,11 +11,40 @@ def enter_symbol(symb):
     #Вставка символа в конец строки
     entry.insert(tk.END,symb)
 
+#Функция для первоочередного вычисления произведений и делений
+def product_first(data):
+    x = data.count("*")
+    if x != 0:
+        n = data.index("*")
+        res = float(data.pop(n-1))*float(data.pop(n))
+        data.insert(n-1,str(res))
+        data.pop(n)
+        data=product_first(data)
+    else:
+        return data
+    return data
+
+def division_second(data):
+    x = data.count("/")
+    if x != 0:
+        n = data.index("/")
+        res = float(data.pop(n-1))/float(data.pop(n))
+        data.insert(n-1,str(res))
+        data.pop(n)
+        data=division_second(data)
+    else:
+        return data
+    return data
+
 def calculate():
     global flag_new_calculation
 
     # Разделяем введенную строку по знакам математических операций
     data = re.split(r'(\+|\-|\*|/)', entry.get())
+
+    if data != "":
+        data = product_first(data)
+        data = division_second(data)
 
     result = 0
     operation = "+"    # начальная операция для первого числа просто +
