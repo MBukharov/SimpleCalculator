@@ -4,9 +4,11 @@ import re
 def enter_symbol(symb):
     global flag_new_calculation
     # если вводить числа после расчета, то строка должна стереться
-    if flag_new_calculation:
+    if flag_new_calculation and re.match("\d",symb):
         clear_entry()
         flag_new_calculation = False
+    else:
+        flag_new_calculation = False    #чтобы продолжить вычисления с предыдущим ответом
 
     #Вставка символа в конец строки
     entry.insert(tk.END,symb)
