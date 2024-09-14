@@ -58,8 +58,8 @@ def calculate():
             el = float(el)
             result = result + el if (operation == "+") else result
             result = result - el if (operation == "-") else result
-            result = result / el if (operation == "/") else result
-            result = result * el if (operation == "*") else result
+            # result = result / el if (operation == "/") else result
+            # result = result * el if (operation == "*") else result
 
         # если элемент символ математической операции, то запоминаем ее
         except ValueError:
