@@ -40,37 +40,45 @@ def division_second(data):
 
 def calculate():
     global flag_new_calculation
+    flag_zero_division = False
 
     # Разделяем введенную строку по знакам математических операций
     data = re.split(r'(\+|\-|\*|/)', entry.get())
 
     if data != "":
         data = product_first(data)
-        data = division_second(data)
+        try:
+            data = division_second(data)
+        except ZeroDivisionError:
+            entry.delete(0, tk.END)
+            entry.insert(0, "Деление на ноль")
+            flag_new_calculation = True         #Чтобы фраза деление на ноль стиралась при нажатии кнопки
+            flag_zero_division = True
 
     result = 0
     operation = "+"    # начальная операция для первого числа просто +
 
     #пробегаем по всем элементам списка, полученного из введенной строки
-    for el in data:
-        try:
-            # пробуем преобразовать элемент в число и производим математическую операцию с ним
-            el = float(el)
-            result = result + el if (operation == "+") else result
-            result = result - el if (operation == "-") else result
-            # result = result / el if (operation == "/") else result
-            # result = result * el if (operation == "*") else result
+    if not flag_zero_division:
+        for el in data:
+            try:
+                # пробуем преобразовать элемент в число и производим математическую операцию с ним
+                el = float(el)
+                result = result + el if (operation == "+") else result
+                result = result - el if (operation == "-") else result
+                # result = result / el if (operation == "/") else result
+                # result = result * el if (operation == "*") else result
 
-        # если элемент символ математической операции, то запоминаем ее
-        except ValueError:
-            operation = el
+            # если элемент символ математической операции, то запоминаем ее
+            except ValueError:
+                operation = el
 
-    # Очищаем строку ввода и вставляем результат вычислений
-    entry.delete(0, tk.END)
-    entry.insert(0,str(result))
+        # Очищаем строку ввода и вставляем результат вычислений
+        entry.delete(0, tk.END)
+        entry.insert(0,str(result))
 
-    # Чтобы при следующем нажатии на кнопку строка очистилась, устанавливаем флаг в значение True
-    flag_new_calculation = True
+        # Чтобы при следующем нажатии на кнопку строка очистилась, устанавливаем флаг в значение True
+        flag_new_calculation = True
 
 # Функция для очистки строки ввода
 def clear_entry():
@@ -81,7 +89,7 @@ def validate_entry(s):
     # Паттерн для проверки, что строка содержит только цифры, знаки операций и точку
     pattern = r'^[\d+\-*/.]+$'
     # Используем re.fullmatch для проверки всей строки
-    if bool(re.fullmatch(pattern, s)) or s == "":
+    if bool(re.fullmatch(pattern, s)) or s == "" or s == "Деление на ноль":
         return True
     else:
         return False
